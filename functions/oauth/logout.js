@@ -47,22 +47,51 @@ export async function onRequest(context) {
     const sessionHash =
       await sha256Base64Url(sessionCookie);
 
-    await context.env.DB
-      .prepare(`
-        DELETE FROM sessions
-        WHERE id_hash = ?
-      `)
-      .bind(sessionHash)
-      .run();
+    try {
+      await context.env.DB
+        .prepare(`
+          DELETE FROM sessions
+          WHERE id_hash = ?
+        `)
+        .bind(sessionHash)
+        .run();
+    } catch (error) {
+      return new Response(
+        `Logout database error: ${
+          error?.message || "unknown error"
+        }`,
+        {
+          status: 500,
+          headers: noStoreHeaders(),
+        }
+      );
+    }
   }
+
+  const headers = new Headers();
+
+  headers.set(
+    "Location",
+    `${context.env.PUBLIC_BASE_URL}/?logout=1`
+  );
+
+  headers.set(
+    "Cache-Control",
+    "no-store, no-cache, must-revalidate"
+  );
+
+  headers.set(
+    "Pragma",
+    "no-cache"
+  );
+
+  headers.append(
+    "Set-Cookie",
+    clearSessionCookie()
+  );
 
   return new Response(null, {
     status: 303,
-    headers: noStoreHeaders({
-      "Location":
-        context.env.PUBLIC_BASE_URL,
-      "Set-Cookie":
-        clearSessionCookie(),
-    }),
+    headers,
   });
 }
