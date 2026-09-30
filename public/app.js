@@ -23,32 +23,4 @@ async function carregarSessao() {
   }
 }
 
-async function sair(event) {
-  event.preventDefault();
-
-  try {
-    await fetch("/oauth/logout", {
-      method: "POST",
-      credentials: "include",
-      cache: "no-store",
-    });
-
-    window.location.replace("/?logout=1");
-  } catch {
-    alert("Não foi possível encerrar a sessão.");
-  }
-}
-
-const logoutForm =
-  document.querySelector(
-    'form[action="/oauth/logout"]'
-  );
-
-if (logoutForm) {
-  logoutForm.addEventListener(
-    "submit",
-    sair
-  );
-}
-
 carregarSessao();
