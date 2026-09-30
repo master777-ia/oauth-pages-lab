@@ -277,9 +277,10 @@ export async function onRequestGet(context) {
           subject,
           email,
           display_name,
+          created_at,
           expires_at
         )
-        VALUES (?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
       `)
       .bind(
         sessionHash,
@@ -287,6 +288,7 @@ export async function onRequestGet(context) {
         identity.subject,
         identity.email,
         identity.displayName,
+        now,
         sessionExpiresAt
       )
       .run();
