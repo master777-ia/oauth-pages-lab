@@ -25,9 +25,13 @@ export async function onRequest(context) {
     });
   }
 
-  const origin = context.request.headers.get("Origin");
+  const origin =
+    context.request.headers.get("Origin");
 
-  if (origin !== context.env.PUBLIC_BASE_URL) {
+  if (
+    origin &&
+    origin !== context.env.PUBLIC_BASE_URL
+  ) {
     return new Response("Forbidden", {
       status: 403,
       headers: noStoreHeaders(),
@@ -44,20 +48,21 @@ export async function onRequest(context) {
       await sha256Base64Url(sessionCookie);
 
     await context.env.DB
-      .prepare(
-        `
+      .prepare(`
         DELETE FROM sessions
         WHERE id_hash = ?
-        `
-      )
+      `)
       .bind(sessionHash)
       .run();
   }
 
   return new Response(null, {
-    status: 204,
+    status: 303,
     headers: noStoreHeaders({
-      "Set-Cookie": clearSessionCookie(),
+      "Location":
+        context.env.PUBLIC_BASE_URL,
+      "Set-Cookie":
+        clearSessionCookie(),
     }),
   });
 }
