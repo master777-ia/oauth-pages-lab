@@ -9,7 +9,22 @@
 <body>
   <main>
     <h1>Laboratório de autenticação</h1>
+
     <p id="status">A sessão ainda não foi consultada.</p>
+
+    <p>
+      <a href="/oauth/login/google">Entrar com Google</a>
+    </p>
+
+    <p>
+      <a href="/oauth/login/github">Entrar com GitHub</a>
+    </p>
+
+    <form method="post" action="/oauth/logout">
+      <button type="submit">Sair</button>
+    </form>
   </main>
+
+  <script src="/app.js" defer></script>
 </body>
 </html>
